@@ -4,7 +4,13 @@
 
 * Add `secure-storage.localhost` to your `/etc/hosts`: `127.0.0.1 secure-storage.localhost`
 
-* Run `make init` to initialize project
+* Run `make init` to initialize project 
+
+If you got such error on that step:
+```
+  An exception occurred in driver: SQLSTATE[HY000] [2002] Connection refused  
+```
+just run `make init` again.
 
 * Open in browser: http://secure-storage.localhost:8000/item Should get `Full authentication is required to access this resource.` error, because first you need to make `login` call (see `postman_collection.json` or `SecurityController` for more info).
 
