@@ -29,7 +29,6 @@ class ItemService
     {
         $item = new Item();
         $item->setUser($user);
-        $item->setData($data);
         $encryptedData = $this->encryptionService->getEncryptedData($user, $data);
         $item->setEncryptedData($encryptedData);
 
@@ -39,7 +38,6 @@ class ItemService
 
     public function update(Item $item, string $data): array
     {
-        $item->setData($data);
         $encryptedData = $this->encryptionService->getEncryptedData($item->getUser(), $data);
         $item->setEncryptedData($encryptedData);
 
@@ -55,11 +53,13 @@ class ItemService
         $response = [];
 
         $response['id'] = $item->getId();
-//        $response['data'] = $item->getData();
+        $response['data'] = 'Sorry, unable to decrypt.';
         try {
-            $response['data'] = $this->encryptionService->getDecryptedData($item->getUser(), $item->getEncryptedData());
+            if ($item->getEncryptedData()) {
+                $response['data'] = $this->encryptionService->getDecryptedData($item->getUser(), $item->getEncryptedData());
+            }
         } catch(WrongKeyOrModifiedCiphertextException $e) {
-            $response['data'] = 'Unable to decrypt';
+            // nothing to do
         }
 
         $response['created_at'] = $item->getCreatedAt();

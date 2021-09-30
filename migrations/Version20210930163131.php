@@ -8,17 +8,14 @@ use App\Service\EncryptionService;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
 final class Version20210930163131 extends AbstractMigration implements ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    use ContainerAwareTrait;
 
     public function getDescription() : string
     {
@@ -41,11 +38,6 @@ final class Version20210930163131 extends AbstractMigration implements Container
 
         $this->addSql('ALTER TABLE item DROP encrypted_data');
         $this->addSql('ALTER TABLE user DROP password_protected_key');
-    }
-
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
     }
 
     public function postUp(Schema $schema): void

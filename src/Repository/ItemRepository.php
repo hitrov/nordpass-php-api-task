@@ -18,4 +18,14 @@ class ItemRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Item::class);
     }
+
+    /**
+     * @return Item[]
+     */
+    public function getNotEncryptedItems(): array
+    {
+        return $this->findBy([
+            'encryptedData' => null,
+        ]);
+    }
 }

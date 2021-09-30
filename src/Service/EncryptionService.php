@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Item;
 use App\Entity\User;
+use App\Repository\ItemRepository;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Defuse\Crypto\KeyProtectedByPassword;
@@ -55,8 +56,11 @@ class EncryptionService
 
     public function encryptAllItems(): void
     {
+        /**
+         * @var $itemRepo ItemRepository
+         */
         $itemRepo = $this->em->getRepository(Item::class);
-        $items = $itemRepo->findAll();
+        $items = $itemRepo->getNotEncryptedItems();
         /**
          * @var $item Item
          */
