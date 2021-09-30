@@ -29,7 +29,6 @@ class ItemService
     {
         $item = new Item();
         $item->setUser($user);
-        $item->setData($data);
         $encryptedData = $this->encryptionService->getEncryptedData($user, $data);
         $item->setEncryptedData($encryptedData);
 
@@ -39,7 +38,6 @@ class ItemService
 
     public function update(Item $item, string $data): array
     {
-        $item->setData($data);
         $encryptedData = $this->encryptionService->getEncryptedData($item->getUser(), $data);
         $item->setEncryptedData($encryptedData);
 

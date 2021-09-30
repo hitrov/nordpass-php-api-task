@@ -67,8 +67,8 @@ class EncryptionServiceTest extends KernelTestCase
     }
 
     /**
-     * @covers EncryptionService::encryptAllItems
      * @covers \App\Service\ItemService::convertToResponse
+     * @covers \App\Service\ItemService::create
      */
     public function testEncryptAllItems(): void
     {
@@ -89,13 +89,8 @@ class EncryptionServiceTest extends KernelTestCase
             'two',
         ];
         foreach ($itemsData as $data) {
-            $item = new Item();
-            $item->setData($data);
-            $item->setUser($this->user);
-            $this->assertNull($item->getEncryptedData());
-            $this->em->persist($item);
+            $this->itemService->create($this->user, $data);
         }
-        $this->em->flush();
 
         /**
          * @var $itemsRepo ItemRepository
@@ -103,16 +98,6 @@ class EncryptionServiceTest extends KernelTestCase
         $itemsRepo = $this->em->getRepository(Item::class);
         $items = $itemsRepo->findAllUserItems($this->user);
         $filteredItems = array_filter($items, function(Item $item) use ($itemsData) {
-            $this->assertNull($item->getEncryptedData());
-            return $item->getData() === $itemsData[0]
-                || $item->getData() === $itemsData[1]
-                || $item->getData() === $itemsData[2];
-        });
-        $this->assertCount(3, $filteredItems);
-
-        $this->encryptionService->encryptAllItems();
-        $filteredItems = array_filter($items, function(Item $item) use ($itemsData) {
-            $this->em->refresh($item);
             $this->assertNotNull($item->getEncryptedData());
             $response = $this->itemService->convertToResponse($item);
             return $response['data'] === $itemsData[0]

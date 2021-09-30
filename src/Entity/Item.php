@@ -21,7 +21,7 @@ class Item
     private $id;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     private $data;
 
@@ -42,7 +42,7 @@ class Item
     private $user;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text", nullable=false)
      */
     private $encryptedData;
 
