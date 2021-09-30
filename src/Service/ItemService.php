@@ -4,15 +4,25 @@ namespace App\Service;
 
 use App\Entity\Item;
 use App\Entity\User;
+use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ItemService
 {
+    /**
+     * @var EntityManagerInterface
+     */
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    /**
+     * @var EncryptionService
+     */
+    private $encryptionService;
+
+    public function __construct(EntityManagerInterface $entityManager, EncryptionService $encryptionService)
     {
         $this->entityManager = $entityManager;
+        $this->encryptionService = $encryptionService;
     }
 
     public function create(User $user, string $data): void
@@ -20,6 +30,8 @@ class ItemService
         $item = new Item();
         $item->setUser($user);
         $item->setData($data);
+        $encryptedData = $this->encryptionService->getEncryptedData($user, $data);
+        $item->setEncryptedData($encryptedData);
 
         $this->entityManager->persist($item);
         $this->entityManager->flush();
@@ -28,6 +40,8 @@ class ItemService
     public function update(Item $item, string $data): array
     {
         $item->setData($data);
+        $encryptedData = $this->encryptionService->getEncryptedData($item->getUser(), $data);
+        $item->setEncryptedData($encryptedData);
 
         $this->entityManager->persist($item);
         $this->entityManager->flush();
@@ -41,7 +55,13 @@ class ItemService
         $response = [];
 
         $response['id'] = $item->getId();
-        $response['data'] = $item->getData();
+//        $response['data'] = $item->getData();
+        try {
+            $response['data'] = $this->encryptionService->getDecryptedData($item->getUser(), $item->getEncryptedData());
+        } catch(WrongKeyOrModifiedCiphertextException $e) {
+            $response['data'] = 'Unable to decrypt';
+        }
+
         $response['created_at'] = $item->getCreatedAt();
         $response['updated_at'] = $item->getUpdatedAt();
 

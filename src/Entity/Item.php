@@ -41,6 +41,11 @@ class Item
      */
     private $user;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $encryptedData;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -116,6 +121,18 @@ class Item
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getEncryptedData(): ?string
+    {
+        return $this->encryptedData;
+    }
+
+    public function setEncryptedData(?string $encryptedData): self
+    {
+        $this->encryptedData = $encryptedData;
 
         return $this;
     }

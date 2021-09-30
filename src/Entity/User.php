@@ -48,6 +48,11 @@ class User implements UserInterface
      */
     private $items;
 
+    /**
+     * @ORM\Column(type="string", length=512, nullable=true)
+     */
+    private $passwordProtectedKey;
+
     public function __construct()
     {
         $this->items = new ArrayCollection();
@@ -160,6 +165,18 @@ class User implements UserInterface
             $this->items[] = $item;
             $item->setUser($this);
         }
+
+        return $this;
+    }
+
+    public function getPasswordProtectedKey(): ?string
+    {
+        return $this->passwordProtectedKey;
+    }
+
+    public function setPasswordProtectedKey(?string $passwordProtectedKey): self
+    {
+        $this->passwordProtectedKey = $passwordProtectedKey;
 
         return $this;
     }
