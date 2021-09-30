@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Item;
+use App\Repository\ItemRepository;
 use App\Service\ItemService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,14 +20,10 @@ class ItemController extends AbstractController
      * @Route("/item", name="item_list", methods={"GET"})
      * @IsGranted("ROLE_USER")
      */
-    public function list(ItemService $itemService): JsonResponse
+    public function list(ItemService $itemService, ItemRepository $itemRepository): JsonResponse
     {
-        $items = $this->getDoctrine()->getRepository(Item::class)->findBy(['user' => $this->getUser()]);
-
+        $items = $itemRepository->findAllUserItems($this->getUser());
         $allItems = [];
-        /**
-         * @var $item Item
-         */
         foreach ($items as $item) {
             $allItems[] = $itemService->convertToResponse($item);
         }
@@ -87,7 +84,7 @@ class ItemController extends AbstractController
      * @Route("/item/{id}", name="items_delete", methods={"DELETE"})
      * @IsGranted("ROLE_USER")
      */
-    public function delete(Request $request, int $id)
+    public function delete(int $id)
     {
         if (empty($id)) {
             return $this->json(['error' => 'No id parameter'], Response::HTTP_BAD_REQUEST);

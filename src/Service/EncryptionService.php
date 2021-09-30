@@ -61,9 +61,6 @@ class EncryptionService
          */
         $itemRepo = $this->em->getRepository(Item::class);
         $items = $itemRepo->getNotEncryptedItems();
-        /**
-         * @var $item Item
-         */
         foreach ($items as $item) {
             $user = $item->getUser();
             $encryptedData = $this->getEncryptedData($user, $item->getData());
@@ -76,7 +73,6 @@ class EncryptionService
                 continue;
             }
             $this->em->persist($item);
-            $this->em->persist($user);
         }
         $this->em->flush();
     }
@@ -120,7 +116,7 @@ class EncryptionService
      * @return string
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    public function getPasswordProtectedKey(User $user): string
+    private function getPasswordProtectedKey(User $user): string
     {
         if (!$user->getPasswordProtectedKey()) {
             $this->createPasswordProtectedKey($user);
