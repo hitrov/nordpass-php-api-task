@@ -21,6 +21,28 @@ make tests
 
 You can import all available API calls to Postman using `postman_collection.json` file
 
+## Encryption
+Migration `Version20210930163131` will encrypt all user items data. 
+Unlock key is random, password-protected, and unique for each user. 
+Password for unlock is being generated this way:
+```php
+hash('sha256', sprintf("%s.%s", $user->getPassword(), $this->params->get('encryption_secret')))
+```
+where `$user->getPassword()` is hashed/salted password from the DB 
+
+and `$this->params->get('encryption_secret')` is env var `ENCRYPTION_SECRET` value. 
+
+For even better security [Secrets](https://symfony.com/doc/current/configuration/secrets.html) can be used, no code changes will be needed. 
+
+### NB!
+You MUST re-encrypt user items data when user changes his password.
+
+### Important Information
+**In case of changing the value of `ENCRYPTION_SECRET` *ALL* user data must be re-encrypted.**
+
+### Clear plain text items
+Please review the branch `drop-plain-data-column` - it contains needed migration `Version20210930214756`. 
+
 ## Endpoints
 ### Authorization
 #### Login
