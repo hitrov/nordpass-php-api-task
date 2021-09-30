@@ -24,4 +24,27 @@ class ItemService
         $this->entityManager->persist($item);
         $this->entityManager->flush();
     }
+
+    public function update(Item $item, string $data): array
+    {
+        $item->setData($data);
+
+        $this->entityManager->persist($item);
+        $this->entityManager->flush();
+        $this->entityManager->refresh($item);
+
+        return $this->convertToResponse($item);
+    }
+
+    public function convertToResponse(Item $item): array
+    {
+        $response = [];
+
+        $response['id'] = $item->getId();
+        $response['data'] = $item->getData();
+        $response['created_at'] = $item->getCreatedAt();
+        $response['updated_at'] = $item->getUpdatedAt();
+
+        return $response;
+    }
 } 
