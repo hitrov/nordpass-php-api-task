@@ -40,7 +40,7 @@ class ItemController extends AbstractController
         $data = $request->get('data');
 
         if (empty($data)) {
-            return $this->json(['error' => 'No data parameter']);
+            return $this->json(['error' => 'No data parameter'], Response::HTTP_BAD_REQUEST);
         }
 
         $itemService->create($this->getUser(), $data);
@@ -56,7 +56,7 @@ class ItemController extends AbstractController
     {
         $data = $request->get('data');
         if (empty($data)) {
-            return $this->json(['error' => 'No data parameter']);
+            return $this->json(['error' => 'No data parameter'], Response::HTTP_BAD_REQUEST);
         }
 
         $id = $request->get('id');
