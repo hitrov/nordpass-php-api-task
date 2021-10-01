@@ -15,6 +15,8 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class EncryptionService
 {
+    const BATCH_SIZE = 20;
+
     /**
      * @var ParameterBagInterface
      */
@@ -59,6 +61,7 @@ class EncryptionService
          */
         $itemRepo = $this->em->getRepository(Item::class);
         $items = $itemRepo->getNotEncryptedItems();
+        $i = 1;
         foreach ($items as $item) {
             $user = $item->getUser();
             $encryptedData = $this->getEncryptedData($user, $item->getData());
@@ -67,10 +70,13 @@ class EncryptionService
             $decryptedData = $this->getDecryptedData($user, $item->getEncryptedData());
 
             if ($decryptedData !== $item->getData()) {
-                // TODO:
                 continue;
             }
+            ++$i;
             $this->em->persist($item);
+            if (($i % self::BATCH_SIZE) === 0) {
+                $this->em->flush(); // Executes all updates.
+            }
         }
         $this->em->flush();
     }
