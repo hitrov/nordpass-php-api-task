@@ -1,5 +1,9 @@
 # Secure Information Storage REST API
 
+<p align="center">
+  <a href="https://github.com/hitrov/nordpass-php-api-task/actions"><img src="https://github.com/hitrov/nordpass-php-api-task/workflows/Tests/badge.svg" alt="Test"></a>
+</p>
+
 ## Project setup
 
 * Add `secure-storage.localhost` to your `/etc/hosts`: `127.0.0.1 secure-storage.localhost`
