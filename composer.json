@@ -1,4 +1,6 @@
 {
+    "name": "hitrov/nordpass-php-api-task",
+    "description": "nordpass-php-api-task",
     "type": "project",
     "license": "proprietary",
     "require": {

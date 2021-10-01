@@ -1,0 +1,46 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - github-actions
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-versions: ['7.3']
+    name: unit-tests (PHP ${{ matrix.php-versions }})
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+      - name: Install dependencies
+        run: |
+          composer update --prefer-dist --no-progress
+      - name: Set up MySQL
+        run: |
+          sudo /etc/init.d/mysql start
+        env:
+          DB_USER: root
+          DB_PASSWORD: megasecret
+      - name: Create test DB
+        run: |
+          bin/console doctrine:database:create
+      - name: Run migrations (test DB)
+        run: |
+          bin/console doctrine:migrations:migrate --no-interaction
+      - name: Load fixtures
+        run: |
+          bin/console doctrine:fixtures:load --no-interaction
+      - name: Run test suite
+        run: |
+          vendor/bin/phpunit --color
+
+

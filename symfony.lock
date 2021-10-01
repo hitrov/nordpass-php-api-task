@@ -5,6 +5,9 @@
     "composer/xdebug-handler": {
         "version": "2.0.2"
     },
+    "defuse/php-encryption": {
+        "version": "v2.3.1"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
