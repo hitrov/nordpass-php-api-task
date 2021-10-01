@@ -32,7 +32,7 @@ jobs:
           mysql -e "FLUSH PRIVILEGES;" -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
         env:
           DB_USER: root
-          DB_PASSWORD: megasecret
+          DB_PASSWORD: root
       - name: Create test DB
         run: |
           bin/console doctrine:database:create
