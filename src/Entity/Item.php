@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use App\Repository\ItemRepository;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\ItemRepository;
 
 /**
  * @ORM\Entity(repositoryClass=ItemRepository::class)
@@ -40,6 +42,11 @@ class Item
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $encryptedData;
 
     public function getId(): ?int
     {
@@ -116,6 +123,18 @@ class Item
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getEncryptedData(): ?string
+    {
+        return $this->encryptedData;
+    }
+
+    public function setEncryptedData(?string $encryptedData): self
+    {
+        $this->encryptedData = $encryptedData;
 
         return $this;
     }

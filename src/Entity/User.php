@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use App\Repository\UserRepository;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -47,6 +49,11 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity=Item::class, mappedBy="user", orphanRemoval=true)
      */
     private $items;
+
+    /**
+     * @ORM\Column(type="string", length=512, nullable=true)
+     */
+    private $passwordProtectedKey;
 
     public function __construct()
     {
@@ -160,6 +167,18 @@ class User implements UserInterface
             $this->items[] = $item;
             $item->setUser($this);
         }
+
+        return $this;
+    }
+
+    public function getPasswordProtectedKey(): ?string
+    {
+        return $this->passwordProtectedKey;
+    }
+
+    public function setPasswordProtectedKey(?string $passwordProtectedKey): self
+    {
+        $this->passwordProtectedKey = $passwordProtectedKey;
 
         return $this;
     }
