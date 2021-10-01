@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Entity\Item;
@@ -58,7 +60,7 @@ class ItemService
             if ($item->getEncryptedData()) {
                 $response['data'] = $this->encryptionService->getDecryptedData($item->getUser(), $item->getEncryptedData());
             }
-        } catch(WrongKeyOrModifiedCiphertextException $e) {
+        } catch (WrongKeyOrModifiedCiphertextException $e) {
             // nothing to do
         }
 
@@ -67,4 +69,4 @@ class ItemService
 
         return $response;
     }
-} 
+}

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Functional\Service;
 
 use App\Entity\Item;
@@ -100,6 +102,7 @@ class EncryptionServiceTest extends KernelTestCase
         $filteredItems = array_filter($items, function(Item $item) use ($itemsData) {
             $this->assertNotNull($item->getEncryptedData());
             $response = $this->itemService->convertToResponse($item);
+
             return $response['data'] === $itemsData[0]
                 || $response['data'] === $itemsData[1]
                 || $response['data'] === $itemsData[2];

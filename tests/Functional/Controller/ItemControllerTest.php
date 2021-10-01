@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Functional\Controller;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use App\Repository\UserRepository;
 
 class ItemControllerTest extends WebTestCase
 {
@@ -32,7 +34,7 @@ class ItemControllerTest extends WebTestCase
      * @covers \App\Controller\ItemController::create
      * @covers \App\Service\ItemService::create
      */
-    public function testCreate()
+    public function testCreate(): void
     {
         $time = time();
         $data = "very secure item data $time";
@@ -48,7 +50,7 @@ class ItemControllerTest extends WebTestCase
      * @covers \App\Controller\ItemController::update
      * @covers \App\Service\ItemService::update
      */
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $time = time();
         $data = "very secure item data $time";
@@ -71,7 +73,7 @@ class ItemControllerTest extends WebTestCase
     /**
      * @covers \App\Controller\ItemController::delete
      */
-    public function testDelete()
+    public function testDelete(): void
     {
         $time = time();
         $data = "very secure item data $time";
@@ -93,7 +95,7 @@ class ItemControllerTest extends WebTestCase
 
         $this->client->request('GET', '/item');
         $response = $this->client->getResponse()->getContent();
-        $item = array_filter(json_decode($response, true), function($item) use ($data) {
+        $item = array_filter(json_decode($response, true), function ($item) use ($data) {
             return $item['data'] === $data;
         });
 

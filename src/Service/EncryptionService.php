@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Entity\Item;
@@ -13,6 +15,8 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class EncryptionService
 {
+    const BATCH_SIZE = 20;
+
     /**
      * @var ParameterBagInterface
      */
@@ -30,25 +34,21 @@ class EncryptionService
     }
 
     /**
-     * @param User $user
-     * @param string $data
-     * @return string
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    public function getEncryptedData(User $user, string $data): string {
+    public function getEncryptedData(User $user, string $data): string
+    {
         $unlocked = $this->getUnlockedKey($user);
 
         return Crypto::encrypt($data, $unlocked);
     }
 
     /**
-     * @param User $user
-     * @param string $encryptedData
-     * @return string
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      * @throws \Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException
      */
-    public function getDecryptedData(User $user, string $encryptedData): string {
+    public function getDecryptedData(User $user, string $encryptedData): string
+    {
         $unlocked = $this->getUnlockedKey($user);
 
         return Crypto::decrypt($encryptedData, $unlocked);
@@ -61,6 +61,7 @@ class EncryptionService
          */
         $itemRepo = $this->em->getRepository(Item::class);
         $items = $itemRepo->getNotEncryptedItems();
+        $i = 1;
         foreach ($items as $item) {
             $user = $item->getUser();
             $encryptedData = $this->getEncryptedData($user, $item->getData());
@@ -69,10 +70,13 @@ class EncryptionService
             $decryptedData = $this->getDecryptedData($user, $item->getEncryptedData());
 
             if ($decryptedData !== $item->getData()) {
-                // TODO:
                 continue;
             }
+            ++$i;
             $this->em->persist($item);
+            if (($i % self::BATCH_SIZE) === 0) {
+                $this->em->flush(); // Executes all updates.
+            }
         }
         $this->em->flush();
     }
@@ -88,12 +92,12 @@ class EncryptionService
 
     private function generateKeyPassword(User $user): string
     {
-        return hash('sha256', sprintf("%s.%s", $user->getPassword(), $this->params->get('encryption_secret')));
+        return hash('sha256', sprintf('%s.%s', $user->getPassword(), $this->params->get('encryption_secret')));
     }
 
     /**
-     * @param User $user
      * @return string
+     *
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
     private function createPasswordProtectedKey(User $user): void
@@ -112,8 +116,6 @@ class EncryptionService
     }
 
     /**
-     * @param User $user
-     * @return string
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
     private function getPasswordProtectedKey(User $user): string
