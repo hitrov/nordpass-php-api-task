@@ -7,12 +7,12 @@ namespace App\Controller;
 use App\Entity\Item;
 use App\Repository\ItemRepository;
 use App\Service\ItemService;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class ItemController extends AbstractController
 {
@@ -71,7 +71,7 @@ class ItemController extends AbstractController
             'id' => $id,
         ]);
 
-        if ($item === null) {
+        if (null === $item) {
             return $this->json(['error' => 'No item'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -95,7 +95,7 @@ class ItemController extends AbstractController
             'id' => $id,
         ]);
 
-        if ($item === null) {
+        if (null === $item) {
             return $this->json(['error' => 'No item'], Response::HTTP_BAD_REQUEST);
         }
 

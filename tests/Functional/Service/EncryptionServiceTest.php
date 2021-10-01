@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Functional\Service;
 
 use App\Entity\Item;
@@ -102,8 +104,9 @@ class EncryptionServiceTest extends KernelTestCase
          */
         $itemsRepo = $this->em->getRepository(Item::class);
         $items = $itemsRepo->findAllUserItems($this->user);
-        $filteredItems = array_filter($items, function(Item $item) use ($itemsData) {
+        $filteredItems = array_filter($items, function (Item $item) use ($itemsData) {
             $this->assertNull($item->getEncryptedData());
+
             return $item->getData() === $itemsData[0]
                 || $item->getData() === $itemsData[1]
                 || $item->getData() === $itemsData[2];
@@ -111,10 +114,11 @@ class EncryptionServiceTest extends KernelTestCase
         $this->assertCount(3, $filteredItems);
 
         $this->encryptionService->encryptAllItems();
-        $filteredItems = array_filter($items, function(Item $item) use ($itemsData) {
+        $filteredItems = array_filter($items, function (Item $item) use ($itemsData) {
             $this->em->refresh($item);
             $this->assertNotNull($item->getEncryptedData());
             $response = $this->itemService->convertToResponse($item);
+
             return $response['data'] === $itemsData[0]
                 || $response['data'] === $itemsData[1]
                 || $response['data'] === $itemsData[2];

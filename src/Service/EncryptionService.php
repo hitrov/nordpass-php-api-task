@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Entity\Item;
@@ -30,25 +32,21 @@ class EncryptionService
     }
 
     /**
-     * @param User $user
-     * @param string $data
-     * @return string
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    public function getEncryptedData(User $user, string $data): string {
+    public function getEncryptedData(User $user, string $data): string
+    {
         $unlocked = $this->getUnlockedKey($user);
 
         return Crypto::encrypt($data, $unlocked);
     }
 
     /**
-     * @param User $user
-     * @param string $encryptedData
-     * @return string
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      * @throws \Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException
      */
-    public function getDecryptedData(User $user, string $encryptedData): string {
+    public function getDecryptedData(User $user, string $encryptedData): string
+    {
         $unlocked = $this->getUnlockedKey($user);
 
         return Crypto::decrypt($encryptedData, $unlocked);
@@ -88,12 +86,12 @@ class EncryptionService
 
     private function generateKeyPassword(User $user): string
     {
-        return hash('sha256', sprintf("%s.%s", $user->getPassword(), $this->params->get('encryption_secret')));
+        return hash('sha256', sprintf('%s.%s', $user->getPassword(), $this->params->get('encryption_secret')));
     }
 
     /**
-     * @param User $user
      * @return string
+     *
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
     private function createPasswordProtectedKey(User $user): void
@@ -112,8 +110,6 @@ class EncryptionService
     }
 
     /**
-     * @param User $user
-     * @return string
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
     private function getPasswordProtectedKey(User $user): string
